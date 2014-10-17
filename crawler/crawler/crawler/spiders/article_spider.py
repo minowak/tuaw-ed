@@ -1,6 +1,3 @@
-import re
-from crawler.items import *
-from scrapy.http import Request
 from scrapy.contrib.linkextractors import LinkExtractor
 from scrapy.contrib.spiders import Rule, CrawlSpider
 from selenium import webdriver
@@ -38,23 +35,9 @@ class ArticleSpider(CrawlSpider):
 
     def crawlArticlePage(self, response):
         self.crawlPage(response).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".fyre-widget")))
-        article = self.parseArticle(response.url)
+        article = self.parser.parseArticle(response.url)
         yield article
 
     def crawlEditorPage(self, response):
         self.crawlPage(response)
 
-    def parseArticle(self, url):
-        article = ArticleItem()
-        article['url'] = url
-        article['title'] = self.parser.parseTitle()
-        article['author'] = self.parser.parseAuthor()
-        article['authorUrl'] = self.parser.parseAuthorUrl()
-        article['authorTwitter'] = self.parser.parseAuthorTwitter()
-        article['timestamp'] = self.parser.parseTimestamp()
-        article['content'] = self.parser.parseContent()
-        article['tags'] = self.parser.parseTags()
-        article['source'] = self.parser.parseSource()
-        article['urlsInContent'] = self.parser.parseUrlsInAuthorPage()
-        article['comments'] = self.parser.parseComments()
-        return article

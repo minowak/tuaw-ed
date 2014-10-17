@@ -1,6 +1,23 @@
+from items import ArticleItem
+
 class Parser():
     def __init__(self, selenium):
         self.selenium = selenium
+
+    def parseArticle(self, url):
+        article = ArticleItem()
+        article['url'] = url
+        article['title'] = self.parseTitle()
+        article['author'] = self.parseAuthor()
+        article['authorUrl'] = self.parseAuthorUrl()
+        article['authorTwitter'] = self.parseAuthorTwitter()
+        article['timestamp'] = self.parseTimestamp()
+        article['content'] = self.parseContent()
+        article['tags'] = self.parseTags()
+        article['source'] = self.parseSource()
+        article['urlsInContent'] = self.parseUrlsInAuthorPage()
+        article['comments'] = self.parseComments()
+        return article
 
     def parseTitle(self):
         return self.extractOne("h1.posttitle").text
