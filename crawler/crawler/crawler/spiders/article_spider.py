@@ -10,26 +10,26 @@ class ArticleSpider(CrawlSpider):
     name = 'article'
     allowed_domains = ['tuaw.com']
     start_urls = [
-        "http://www.tuaw.com/2014/09/17/psa-ios-8-is-going-to-make-your-iphone-4s-a-good-bit-slower/?ncid=rss_truncated&cps=gravity"
+        "http://www.tuaw.com/about",
+		"http://www.tuaw.com/editor/steven-sande"
     ]
     rules = (
         Rule(LinkExtractor(allow=(r'tuaw.com/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}', )), callback='crawlArticlePage', follow=True),
-        Rule(LinkExtractor(allow=(r'\/editor\/', )), callback='crawlEditorPage', follow=True)
+        Rule(LinkExtractor(allow=(r'\/editor\/', )), callback='crawlEditorPage', follow=True),
+        Rule(LinkExtractor(deny=(r'(\/editor\/)|(tuaw.com/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2})', )), callback='crawlPage', follow=True)
     )
 
     def __init__(self):
         CrawlSpider.__init__(self)
         self.selenium = webdriver.Firefox()
         self.parser = Parser(self.selenium)
-        self.visitedUrls = []
         self.webpageLoadTimeoutInSeconds = 10
 
     def parse_start_url(self, response):
-        return self.crawlArticlePage(response)
+        return self.crawlPage(response)
 
     def crawlPage(self, response):
         url = response.url
-        self.visitedUrls.append(url)
         self.selenium.get(url)
         return WebDriverWait(self.selenium, self.webpageLoadTimeoutInSeconds)
 
