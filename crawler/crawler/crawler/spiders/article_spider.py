@@ -40,23 +40,9 @@ class ArticleSpider(CrawlSpider):
         self.crawlPage(response).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".fyre-widget")))
         article = self.parseArticle(response.url)
         yield article
-        #self.crawlAuthorUrl(article)
-        #self.continueCrawlingArticles(article['urlsInContent'])
 
     def crawlEditorPage(self, response):
-        self.crawlPage(response)#.until(EC.presence_of_element_located((By.ID, "micro-posts")))
-        urls = self.parser.parseUrlsInEditorPage()
-        #self.continueCrawlingArticles(urls)
-
-    def crawlAuthorUrl(self, article):
-        authorUrl = article['authorUrl']
-        if authorUrl not in self.visitedUrls:
-            yield Request(authorUrl, callback = self.crawlEditorPage)
-
-    def continueCrawlingArticles(self, urls):
-        for url in urls:
-            if re.match("tuaw.com/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}", url) and url not in self.visitedUrls:
-                yield Request(url, callback = self.crawlArticlePage)
+        self.crawlPage(response)
 
     def parseArticle(self, url):
         article = ArticleItem()
@@ -72,6 +58,3 @@ class ArticleSpider(CrawlSpider):
         article['urlsInContent'] = self.parser.parseUrlsInAuthorPage()
         article['comments'] = self.parser.parseComments()
         return article
-
-
-
