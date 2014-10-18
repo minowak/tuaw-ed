@@ -36,10 +36,14 @@ def SQL_add_user(user):
 		
 
 def SQL_add_comment(comment):
-	return """INSERT INTO comments(userId, content, timestamp) 
-		VALUES ('""" + comment['author'] + "', '" + comment['content'] + "', '" + comment['timestamp'] + """')
+	return """INSERT INTO comments(userId, content, timestamp, url) 
+		VALUES ('""" + comment['author'] + "', '" + comment['content'] + "', '" + comment['timestamp'] + "', '" + comment['url'] + """')
 		ON DUPLICATE KEY UPDATE
 		content='""" + comment['content'] + "', timestamp='" + comment['timestamp'] + "';"
+
+def SQL_add_article_tag_relation(articleUrl, tag):
+	return """INSERT INTO article_to_tags (tagId, articleUrl)
+		VALUES ('""" + tag + "', '" + articleUrl + "');"
 
 if __name__ == '__main__':
 	out = False
@@ -60,8 +64,8 @@ if __name__ == '__main__':
 		timestamp TEXT NOT NULL,
 		content LONGTEXT NOT NULL,
 		source TEXT NOT NULL,
-		id MEDIUMINT NOT NULL AUTO_INCREMENT
-		primary KEY (id));"""
+		url VARCHAR(128) NOT NULL AUTO_INCREMENT
+		primary KEY (url));"""
 
 	SQL += """CREATE TABLE comments (
 		userId VARCHAR(32) NOT NULL,
@@ -71,14 +75,14 @@ if __name__ == '__main__':
 		primary KEY (id)
 		);"""
 		
-	SQL += """CREATE TABLE author(
+	SQL += """CREATE TABLE authors(
 		authorUrl VARCHAR(64) NOT NULL,
 		name TEXT NOT NULL,
 		authorTwitter TEXT NOT NULL,
 		primary KEY (authorUrl)
 		);"""
 
-	SQL += """CREATE TABLE user(
+	SQL += """CREATE TABLE users(
 		userId VARCHAR(32) NOT NULL,
 		primary KEY(userId)
 		);"""
@@ -87,6 +91,11 @@ if __name__ == '__main__':
 		tag VARCHAR(32) NOT NULL,
 		primary KEY(tag)
 		);"""
+
+	SQL += """CREATE TABLE article_to_tags(
+		tagId VARCHAR(32) NOT NULL,
+		articleUrl VARCHAR(128) NOT NULL);
+		"""
 
 	for article in articles:
 		author = {}
@@ -98,8 +107,10 @@ if __name__ == '__main__':
 
 		for tag in article['tags']:
 			SQL += SQL_add_tag(tag)
+			SQL += SQL_add_article_tag_relation(author['url'], tag)
 
 		for comment in article['comments']:
+			comment['url'] = article['url']
 			SQL += SQL_add_comment(comment)
 			SQL += SQL_add_user(comment['author'])
 
