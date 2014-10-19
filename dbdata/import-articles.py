@@ -5,6 +5,16 @@ import sys
 	Args: in_file [out_file]
 '''
 
+def fix_string(obj):
+	if isinstance(obj, basestring):
+		return obj.replace("'", "\'")
+	else:
+		for nested in obj.keys():
+			if isinstance(obj[nested], basestring):
+				obj[nested] = obj[nested].replace("'", "\'")
+	
+	return obj
+
 def get_content(filename):
 	'''
 		Opens given file and translate JSON inside it to 
@@ -15,35 +25,39 @@ def get_content(filename):
 	return data
 
 def SQL_add_author(author):
-	return """INSERT INTO author (name, authorUrl, authorTwitter)
-		VALUES ('""" + author['name'] + "', '" + author['url'] + "', '" + author['twitter'] + """,)
+	return """INSERT INTO authors (name, authorUrl, authorTwitter)
+		VALUES ('""" + author['name'] + "', '" + author['url'] + "', '" + author['twitter'] + """')
 		ON DUPLICATE KEY UPDATE
-		name='""" + author['name'] + "', authorTwitter='" + author['twitter'] + "';"
+		name='""" + author['name'] + "', authorTwitter='" + author['twitter'] + "';\n"
 		
 def SQL_add_tag(tag):
-	return "INSERT IGNORE INTO tags (tag) VALUES ('" + tag + "');"
+	return "INSERT IGNORE INTO tags (tag) VALUES ('" + tag + "');\n"
 		
 
 def SQL_add_article(article):
+	article['content'] = article['content'].replace("'", "\\'")
+	article['title'] = article['title'].replace("'", "\\'")
 	return """INSERT INTO articles (authorUrl, title, timestamp, content, source)
 		VALUES ('""" + article['url'] + "', '" + article['title'] + "', '" + article['timestamp'] + """
 		', '""" + article['content'] + "', '" + article['source'] + "')" + """
 		ON DUPLICATE KEY UPDATE
-		title='""" + article['title'] + "', timestatmp='" + article['timestamp'] + "', content='" + article['content'] + "', source='" + article['source'] + "';";
+		title='""" + article['title'] + "', timestamp='" + article['timestamp'] + "', content='" + article['content'] + "', source='" + article['source'] + "';\n";
 	
 def SQL_add_user(user):
-	return "INSERT IGNORE INTO users(userId) VALUES ('" + user + "');" 
+	return "INSERT IGNORE INTO users(userId) VALUES ('" + user + "');\n" 
 		
 
 def SQL_add_comment(comment):
+	comment['content'] = comment['content'].replace("'", "\\'")
+	comment['author'] = comment['author'].replace("'", "\\'")
 	return """INSERT INTO comments(userId, content, timestamp, url) 
 		VALUES ('""" + comment['author'] + "', '" + comment['content'] + "', '" + comment['timestamp'] + "', '" + comment['url'] + """')
 		ON DUPLICATE KEY UPDATE
-		content='""" + comment['content'] + "', timestamp='" + comment['timestamp'] + "';"
+		content='""" + comment['content'] + "', timestamp='" + comment['timestamp'] + "';\n"
 
 def SQL_add_article_tag_relation(articleUrl, tag):
 	return """INSERT INTO article_to_tags (tagId, articleUrl)
-		VALUES ('""" + tag + "', '" + articleUrl + "');"
+		VALUES ('""" + tag + "', '" + articleUrl + "');\n"
 
 if __name__ == '__main__':
 	out = False
@@ -57,20 +71,21 @@ if __name__ == '__main__':
  	articles = get_content(in_file)
 
 	SQL = 'DROP DATABASE IF EXISTS tuaw;'
-	SQL += 'CREATE DATABASE tuaw;'
+	SQL += 'CREATE DATABASE tuaw;USE tuaw;'
 	SQL += """CREATE TABLE articles (
 		authorUrl VARCHAR(64) NOT NULL,
 		title TEXT NOT NULL,
 		timestamp TEXT NOT NULL,
 		content LONGTEXT NOT NULL,
 		source TEXT NOT NULL,
-		url VARCHAR(128) NOT NULL AUTO_INCREMENT
+		url VARCHAR(128) NOT NULL,
 		primary KEY (url));"""
 
 	SQL += """CREATE TABLE comments (
 		userId VARCHAR(32) NOT NULL,
 		content TEXT NOT NULL,
 		timestamp TIMESTAMP NOT NULL,
+		url VARCHAR(128) NOT NULL,
 		id MEDIUMINT NOT NULL AUTO_INCREMENT,
 		primary KEY (id)
 		);"""
@@ -98,6 +113,7 @@ if __name__ == '__main__':
 		"""
 
 	for article in articles:
+		article = fix_string(article)
 		author = {}
 		author['url'] = article['authorUrl'] # to jest nasze ID
 		author['twitter'] = article['authorTwitter']
@@ -110,11 +126,18 @@ if __name__ == '__main__':
 			SQL += SQL_add_article_tag_relation(author['url'], tag)
 
 		for comment in article['comments']:
+			comment = fix_string(comment)
 			comment['url'] = article['url']
 			SQL += SQL_add_comment(comment)
 			SQL += SQL_add_user(comment['author'])
 
 		SQL += SQL_add_article(article)
 
-	print SQL
+	SQL = SQL.encode('utf-8')
+	if not out:
+		print SQL
+	else:
+		o_file = open(out_file, 'w')
+		o_file.write(SQL)
+		o_file.close()
 	
