@@ -109,7 +109,9 @@ if __name__ == '__main__':
 
 	SQL += """CREATE TABLE article_to_tags(
 		tagId VARCHAR(32) NOT NULL,
-		articleUrl VARCHAR(128) NOT NULL);
+		articleUrl VARCHAR(128) NOT NULL,
+		id MEDIUMINT NOT NULL AUTO_INCREMENT,
+		primary KEY(id));
 		"""
 
 	for article in articles:
