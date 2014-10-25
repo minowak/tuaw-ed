@@ -13,6 +13,7 @@ class Parser():
         article['authorTwitter'] = self.parseAuthorTwitter()
         article['timestamp'] = self.parseTimestamp()
         article['content'] = self.parseContent()
+        article['htmlContent'] = self.parseHtmlContent()
         article['tags'] = self.parseTags()
         article['source'] = self.parseSource()
         article['urlsInContent'] = self.parseUrlsInAuthorPage()
@@ -40,11 +41,18 @@ class Parser():
         joinedContent = " ".join(contentWithoutEmptyLines)
         return joinedContent
 
+    def parseHtmlContent(self):
+        return self.extractOne("div.article div.body").get_attribute('innerHTML')
+
     def parseTags(self):
         return [x.get_attribute('text') for x in self.extract('div.collapse p a')]
 
     def parseSource(self):
-        return self.extractOne("#source a").get_attribute('href')
+        source = self.extractOne("#source a")
+        if source is not None:
+            return source.get_attribute('href')
+        else:
+            return ''
 
     def parseUrlsInAuthorPage(self):
         return [x.get_attribute('href') for x in self.extract("div.article div.body a")]
@@ -60,7 +68,7 @@ class Parser():
             parsedComment['author'] = self.extractOneChild(comment, "[itemprop='author']").text
             parsedComment['timestamp'] = self.extractOneChild(comment, "[itemprop='dateCreated']").get_attribute('content')
             parsedComment['content'] = self.extractOneChild(comment, "[itemprop='text'] p").text
-            #TODO: comment responses ?
+            parsedComment['htmlContent'] = comment.get_attribute('innerHTML')
             parsedComments.append(parsedComment)
         return parsedComments
 
@@ -68,7 +76,15 @@ class Parser():
         return self.selenium.find_elements_by_css_selector(cssSelector)
 
     def extractOne(self, cssSelector):
-        return self.extract(cssSelector)[0]
+        elements = self.extract(cssSelector)
+        if len(elements) > 0:
+            return elements[0]
+        else:
+            return None
 
     def extractOneChild(self, element, cssSelector):
-        return element.find_elements_by_css_selector(cssSelector)[0]
+        elements = element.find_elements_by_css_selector(cssSelector)
+        if len(elements) > 0:
+            return elements[0]
+        else:
+            return None
