@@ -35,8 +35,13 @@ def SQL_add_tag(tag):
 		
 
 def SQL_add_article(article):
-	article['content'] = article['content'].replace("'", "\\'")
-	article['title'] = article['title'].replace("'", "\\'")
+	# debug ifs
+	if 'content' in article:
+		article['content'] = article['content'].replace("'", "\\'")
+	if 'title' in article:
+		article['title'] = article['title'].replace("'", "\\'")
+	if 'htmlContent' in article:
+		article['htmlContent'] = article['htmlContent'].replace("'", "\\'")
 	return """INSERT INTO articles (authorUrl, title, timestamp, content, source)
 		VALUES ('""" + article['url'] + "', '" + article['title'] + "', '" + article['timestamp'] + """
 		', '""" + article['content'] + "', '" + article['source'] + "')" + """
@@ -77,6 +82,7 @@ if __name__ == '__main__':
 		title TEXT NOT NULL,
 		timestamp TEXT NOT NULL,
 		content LONGTEXT NOT NULL,
+		htmlContent LONGTEXT NOT NULL,
 		source TEXT NOT NULL,
 		url VARCHAR(128) NOT NULL,
 		primary KEY (url));"""
