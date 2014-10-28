@@ -8,6 +8,7 @@ class ArticleItem(scrapy.Item):
     timestamp = scrapy.Field()
     title = scrapy.Field()
     content = scrapy.Field()
+    htmlContent = scrapy.Field()
     tags = scrapy.Field()
     source = scrapy.Field()
     comments = scrapy.Field()
