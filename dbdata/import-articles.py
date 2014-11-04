@@ -31,6 +31,7 @@ def SQL_add_author(author):
 		name='""" + author['name'] + "', authorTwitter='" + author['twitter'] + "';\n"
 		
 def SQL_add_tag(tag):
+	tag = tag.replace("'", "")
 	return "INSERT IGNORE INTO tags (tag) VALUES ('" + tag + "');\n"
 		
 
@@ -61,6 +62,7 @@ def SQL_add_comment(comment):
 		content='""" + comment['content'] + "', timestamp='" + comment['timestamp'] + "';\n"
 
 def SQL_add_article_tag_relation(articleUrl, tag):
+	tag = tag.replace("'", "")
 	return """INSERT INTO article_to_tags (tagId, articleUrl)
 		VALUES ('""" + tag + "', '" + articleUrl + "');\n"
 
@@ -125,7 +127,7 @@ if __name__ == '__main__':
 		author = {}
 		author['url'] = article['authorUrl'] # to jest nasze ID
 		author['twitter'] = article['authorTwitter']
-		author['name'] = article['author']
+		author['name'] = article['author'].replace("'", "\\'")
 
 		SQL += SQL_add_author(author)
 
