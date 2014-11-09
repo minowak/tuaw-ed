@@ -38,16 +38,17 @@ def SQL_add_tag(tag):
 def SQL_add_article(article):
 	# debug ifs
 	if 'content' in article:
-		article['content'] = article['content'].replace("'", "\\'")
+		article['content'] = article['content'].replace("'", "\\'").replace("\\\\'", "\\'")
 	if 'title' in article:
 		article['title'] = article['title'].replace("'", "\\'")
 	if 'htmlContent' in article:
 		article['htmlContent'] = article['htmlContent'].replace("'", "\\'")
-	return """INSERT INTO articles (authorUrl, title, timestamp, content, source)
-		VALUES ('""" + article['url'] + "', '" + article['title'] + "', '" + article['timestamp'] + """
+	return """INSERT INTO articles (url, authorUrl, title, timestamp, content, source)
+		VALUES ('""" + article['url'] + "', '" + article['authorUrl'] + "', '" + article['title'] + "', '" + article['timestamp'] + """
 		', '""" + article['content'] + "', '" + article['source'] + "')" + """
 		ON DUPLICATE KEY UPDATE
 		title='""" + article['title'] + "', timestamp='" + article['timestamp'] + "', content='" + article['content'] + "', source='" + article['source'] + "';\n";
+	
 	
 def SQL_add_user(user):
 	return "INSERT IGNORE INTO users(userId) VALUES ('" + user + "');\n" 
