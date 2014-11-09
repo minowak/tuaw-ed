@@ -4,6 +4,9 @@ class Parser():
     def __init__(self, selenium):
         self.selenium = selenium
 
+    def containsComments(self):
+        return self.extractOne('#lf_comment_stream') is not None
+
     def parseArticle(self, url):
         article = ArticleItem()
         article['url'] = url
@@ -21,19 +24,29 @@ class Parser():
         return article
 
     def parseTitle(self):
-        return self.extractOne("h1.posttitle").text
+        element = self.extractOne("h1.posttitle")
+        if element is not None: return element.text
+        else: return ''
 
     def parseAuthor(self):
-        return self.extractOne("span.author a").text
+        element = self.extractOne("span.author a")
+        if element is not None: return element.text
+        else: return ''
 
     def parseAuthorUrl(self):
-        return self.extractOne("span.author a").get_attribute('href')
+        element = self.extractOne("span.author a")
+        if element is not None: return element.get_attribute('href')
+        else: return ''
 
     def parseAuthorTwitter(self):
-        return self.extractOne("span.tweet a").get_attribute('href')
+        element = self.extractOne("span.tweet a")
+        if element is not None: return element.get_attribute('href')
+        else: return ''
 
     def parseTimestamp(self):
-        return self.extractOne("span.timestamp").text
+        element = self.extractOne("span.timestamp")
+        if element is not None: return element.text
+        else: return ''
 
     def parseContent(self):
         content = [x.text for x in self.extract("div.article div.body *")]
@@ -42,17 +55,20 @@ class Parser():
         return joinedContent
 
     def parseHtmlContent(self):
-        return self.extractOne("div.article div.body").get_attribute('innerHTML')
+        element = self.extractOne("div.article div.body")
+        if element is not None: return element.get_attribute('innerHTML')
+        else: return ''
 
     def parseTags(self):
-        return [x.get_attribute('text') for x in self.extract('div.collapse p a')]
+        elements = self.extract('div.collapse p a')
+        if elements is not None:
+            return [x.get_attribute('text') for x in elements]
+        else: return ''
 
     def parseSource(self):
-        source = self.extractOne("#source a")
-        if source is not None:
-            return source.get_attribute('href')
-        else:
-            return ''
+        element = self.extractOne("#source a")
+        if element is not None: return element.get_attribute('href')
+        else: return ''
 
     def parseUrlsInAuthorPage(self):
         return [x.get_attribute('href') for x in self.extract("div.article div.body a")]
