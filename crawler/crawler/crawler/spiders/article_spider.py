@@ -14,7 +14,8 @@ class ArticleSpider(CrawlSpider):
     allowed_domains = ['tuaw.com']
     start_urls = [
         "http://www.tuaw.com/about",
-		"http://www.tuaw.com/editor/steven-sande"
+        "http://www.tuaw.com/editor/chris-rawson/page/101",
+		"http://www.tuaw.com/editor/Mel-Martin/page/184"
     ]
     rules = (
         Rule(LinkExtractor(allow=(r'tuaw.com/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}', )), callback='crawlArticlePage', follow=True),
