@@ -1,0 +1,17 @@
+# The links inside the communities at k=4
+# from C:\Users\News\Downloads\CFinder-2.0.6--1448\C:\Users\News\Documents\tuaw-ed\cfinder\authors-comments.txt
+# at no lower link weight threshold,
+# and at no upper link weight threshold.
+# Links were treated as undirected.
+# No time limit was set for the clique search.
+
+0:
+MikeWehner ChrisRawson
+MikeWehner VictorAgredaJr
+MikeWehner hal.sherman
+MikeWehner peterjohnson6502
+ChrisRawson VictorAgredaJr
+ChrisRawson hal.sherman
+ChrisRawson peterjohnson6502
+VictorAgredaJr hal.sherman
+VictorAgredaJr peterjohnson6502

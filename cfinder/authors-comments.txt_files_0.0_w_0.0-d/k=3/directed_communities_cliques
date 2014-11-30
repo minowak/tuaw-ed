@@ -1,0 +1,8 @@
+# The contained directed cliques in the directed communities at k=3
+# from C:\Users\News\Downloads\CFinder-2.0.6--1448\C:\Users\News\Documents\tuaw-ed\cfinder\authors-comments.txt
+# at no lower link weight threshold,
+# and at no upper link weight threshold.
+# Links were treated as directed.
+# No time limit was set for the clique search.
+
+0: 0 2 4 6 7 9 10 11 12 13 14 16 17 18 19 20 21 22 23 24 28 29 30 31 35 36 37 38 39 40 41 42 43 44 45 46 47 48 52 53 54 55 61 62 63 64 66 75 76 77 78 79 80 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 5 8 15 25 58 65 67 68 69 71 26 27 1 82 81 83 84 3 34 50 59 72 32 33 57 70 56 60 49 51 73 74 
