@@ -7,7 +7,7 @@ class AuthorUserComments(NodesEdgesCreator):
         self.author = author
 
     def create(self, articles):
-        articles = filter(lambda a: a['author'] == self.author, articles)
+        #articles = filter(lambda a: a['author'] == self.author, articles)
         authors = []
         all_users = []
         for article in articles:
