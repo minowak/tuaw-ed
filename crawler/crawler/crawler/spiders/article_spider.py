@@ -7,7 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from crawler.parser import Parser
 
-visited_urls = [article['url'] for article in json.load(open("crawled-articles.json", 'r'))]
+#visited_urls = [article['url'] for article in json.load(open("crawled-articles.json", 'r'))]
 
 class ArticleSpider(CrawlSpider):
     name = 'article'
@@ -20,8 +20,8 @@ class ArticleSpider(CrawlSpider):
     rules = (
         Rule(LinkExtractor(allow=(r'tuaw.com/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}', )), callback='crawlArticlePage', follow=True),
         Rule(LinkExtractor(allow=(r'\/editor\/', )), callback='crawlEditorPage', follow=True),
-        Rule(LinkExtractor(deny=(r'(\/editor\/)|(tuaw.com/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2})', )), callback='crawlPage', follow=True),
-        Rule(LinkExtractor(deny=visited_urls))
+        Rule(LinkExtractor(deny=(r'(\/editor\/)|(tuaw.com/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2})', )), callback='crawlPage', follow=True)
+        #Rule(LinkExtractor(deny=visited_urls))
     )
 
     def __init__(self):
